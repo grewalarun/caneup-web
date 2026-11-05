@@ -1,26 +1,201 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens.
+ * Rind   – the purple rind of sugarcane: brand, actions, header band
+ * Leaf   – cane leaf green: good / paid / weighed
+ * Gud    – jaggery amber: pending
+ * Chilli – cancelled / error
+ * Text/surface pairs are checked for WCAG AA (4.5:1) in both themes.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --bg: #c9fbf3;
+  --surface: #ffffff;
+  --surface-2: #eefcf9;
+  --ink: #0f1b3d;
+  --muted: #4a5578;
+  --line: #c3d0ec;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --brand: #1c46c8;
+  --brand-ink: #ffffff;
+  --brand-soft: #e6edff;
+  --band: #1c46c8;
+  --band-ink: #ffffff;
+  --accent: #007a66; /* teal headings (AA on white) */
+  --teal: #12c9a6;   /* top stripe */
+
+  --leaf: #17653a;
+  --leaf-soft: #dcf0e2;
+  --gud: #7d4a00;
+  --gud-soft: #fbebcd;
+  --chilli: #a8221a;
+  --chilli-soft: #fde3e0;
+
+  /* calendar grid (matches the official portal's colour coding) */
+  --cal-early: #d9dcd8;
+  --cal-general: #fbfbe3;
+  --cal-rejected: #f6c3cb;
+  --cal-delivered: #a9ec9f;
+  --cal-overweight: #fcd979;
+  --cal-head: #1c46c8;
+  --cal-head-ink: #ffffff;
+  --cal-line: #1d1a27;
+
+  --shadow: 0 1px 2px rgb(29 26 39 / 0.06), 0 8px 24px -12px rgb(29 26 39 / 0.18);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #08102b;
+    --surface: #0f1a40;
+    --surface-2: #16234f;
+    --ink: #eaf0ff;
+    --muted: #aab6dc;
+    --line: #2a3c75;
+
+    --brand: #9db8ff;
+    --brand-ink: #0a1640;
+    --brand-soft: #1a2b63;
+    --band: #1a3fb8;
+    --band-ink: #ffffff;
+    --accent: #4fe3c4;
+    --teal: #0b6f60;
+
+    --leaf: #7bd6a0;
+    --leaf-soft: #163220;
+    --gud: #f2bd62;
+    --gud-soft: #3a2a0d;
+    --chilli: #ff9f95;
+    --chilli-soft: #40201d;
+
+    --cal-early: #2f3531;
+    --cal-general: #36361d;
+    --cal-rejected: #4d2830;
+    --cal-delivered: #1f6a3a;
+    --cal-overweight: #80601a;
+    --cal-head: #1a3fb8;
+    --cal-line: #8a8099;
+
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
   }
 }
 
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-band: var(--band);
+  --color-band-ink: var(--band-ink);
+  --color-accent: var(--accent);
+  --color-teal: var(--teal);
+  --color-leaf: var(--leaf);
+  --color-leaf-soft: var(--leaf-soft);
+  --color-gud: var(--gud);
+  --color-gud-soft: var(--gud-soft);
+  --color-chilli: var(--chilli);
+  --color-chilli-soft: var(--chilli-soft);
+  --color-cal-early: var(--cal-early);
+  --color-cal-general: var(--cal-general);
+  --color-cal-rejected: var(--cal-rejected);
+  --color-cal-delivered: var(--cal-delivered);
+  --color-cal-overweight: var(--cal-overweight);
+  --color-cal-head: var(--cal-head);
+  --color-cal-head-ink: var(--cal-head-ink);
+  --color-cal-line: var(--cal-line);
+  --font-sans: var(--font-roboto), var(--font-hind), "Noto Sans Devanagari", system-ui, sans-serif;
+  --font-display: var(--font-roboto), var(--font-hind), "Noto Sans Devanagari", system-ui, sans-serif;
+  --shadow-sheet: var(--shadow);
+}
+
+html {
+  color-scheme: light dark;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 1rem;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem; /* 17px: comfortable outdoors, on small phones */
+  line-height: 1.6;
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+}
+
+/* Devanagari has tall matras; give it room. */
+:lang(hi) {
+  line-height: 1.8;
+}
+
+button,
+[role="tab"],
+[role="option"],
+summary,
+select,
+input {
+  touch-action: manipulation;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/* Visible, high-contrast focus everywhere; white on the dark header band. */
+:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.on-band :focus-visible {
+  outline-color: #ffffff;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Ticket perforation between header and body, with side notches like a tear-off pass. */
+.perforation {
+  position: relative;
+  height: 0;
+  border-top: 3px dashed var(--line);
+  margin: 0 18px;
+}
+.perforation::before,
+.perforation::after {
+  content: "";
+  position: absolute;
+  top: -12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg);
+}
+.perforation::before { left: -29px; }
+.perforation::after { right: -29px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }
