@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Hind, Roboto } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 // Both families ship real Devanagari and Latin glyphs, so Hindi and English share one voice.
@@ -37,7 +38,17 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${hind.variable} ${roboto.variable} h-full`}>
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {children}
+        {/* Privacy-friendly visitor counter (no cookies, no farmer data); production only. */}
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            src="https://gc.zgo.at/count.js"
+            data-goatcounter="https://caneup.goatcounter.com/count"
+            strategy="afterInteractive"
+          />
+        )}
+      </body>
     </html>
   );
 }

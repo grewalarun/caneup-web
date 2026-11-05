@@ -9,6 +9,7 @@ import {
 } from "react";
 import { api, type Lang } from "@/lib/client-api";
 import Image from "next/image";
+import { VisitorCount } from "./visitor-count";
 import { splitGrowerCode, type FarmerData } from "@/lib/parse";
 import { t } from "@/lib/i18n";
 import { Combobox, type ComboStrings } from "./combobox";
@@ -509,6 +510,7 @@ export function FarmerApp() {
           >
             1800-121-3203
           </a>
+          <VisitorCount label={t("visitors", lang)} />
         </footer>
       </div>
     </div>

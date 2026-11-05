@@ -14,6 +14,7 @@ const L = {
   unofficial: { en: "Unofficial viewer", hi: "अनौपचारिक व्यूअर" },
   skip: { en: "Skip to main content", hi: "मुख्य सामग्री पर जाएं" },
   language: { en: "Language", hi: "भाषा" },
+  visitors: { en: "Total visits", hi: "कुल विज़िट" },
   footer: {
     en: "Unofficial viewer. All data belongs to the Sugar Industry & Cane Development Department, Uttar Pradesh. Grower helpline (toll free):",
     hi: "अनौपचारिक व्यूअर। सारा डेटा चीनी उद्योग एवं गन्ना विकास विभाग, उत्तर प्रदेश का है। किसान हेल्पलाइन (टोल फ्री):",
