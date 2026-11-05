@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 /**
- * Total visits from GoatCounter's public counter. Renders nothing until the number arrives, and
+ * Total visits, read through our own /api/visits route (GoatCounter token stays server-side). Renders nothing until the number arrives, and
  * nothing at all if the counter is disabled or blocked, so the footer never shows an error.
  */
 export function VisitorCount({ label }: { label: string }) {
