@@ -8,9 +8,13 @@ import {
 } from "@/lib/parse";
 
 // Reference data changes rarely; let browsers/CDNs hold it for a while.
-const CACHE = "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
+const CACHE =
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
 
-export async function GET(req: NextRequest, ctx: RouteContext<"/api/lookup/[kind]">) {
+export async function GET(
+  req: NextRequest,
+  ctx: RouteContext<"/api/lookup/[kind]">,
+) {
   const { kind } = await ctx.params;
   const q = req.nextUrl.searchParams;
   const hi = q.get("lang") === "hi";
@@ -27,9 +31,12 @@ export async function GET(req: NextRequest, ctx: RouteContext<"/api/lookup/[kind
       case "factories": {
         const district = assertSegment("district", q.get("district"));
         data = parseFactories(
-          await upstream([hi ? "Fill_Factory_Hindi1" : "Fill_Factory1", district], {
-            allowEmpty: true,
-          }),
+          await upstream(
+            [hi ? "Fill_Factory_Hindi1" : "Fill_Factory1", district],
+            {
+              allowEmpty: true,
+            },
+          ),
         );
         break;
       }
@@ -38,7 +45,13 @@ export async function GET(req: NextRequest, ctx: RouteContext<"/api/lookup/[kind
         const season = assertSegment("season", q.get("season"));
         data = parseCodeNameList(
           await upstream(
-            [hi ? "Fill_Village_Hindi" : "Fill_Village", factory, "0", "0", season],
+            [
+              hi ? "Fill_Village_Hindi" : "Fill_Village",
+              factory,
+              "0",
+              "0",
+              season,
+            ],
             { allowEmpty: true },
           ),
         );
@@ -50,7 +63,14 @@ export async function GET(req: NextRequest, ctx: RouteContext<"/api/lookup/[kind
         const season = assertSegment("season", q.get("season"));
         data = parseGrowers(
           await upstream(
-            [hi ? "Fill_Grower_Hindi" : "Fill_Grower", factory, "0", "0", village, season],
+            [
+              hi ? "Fill_Grower_Hindi" : "Fill_Grower",
+              factory,
+              "0",
+              "0",
+              village,
+              season,
+            ],
             { allowEmpty: true, timeoutMs: 60_000 },
           ),
         );
@@ -59,10 +79,24 @@ export async function GET(req: NextRequest, ctx: RouteContext<"/api/lookup/[kind
       default:
         return Response.json({ error: "Unknown lookup" }, { status: 404 });
     }
-    return Response.json({ data }, { headers: { "Cache-Control": CACHE } });
+    // Never let a CDN keep an empty list (a transient upstream blank) for an hour, and make
+    // sure every query parameter (district, factory, village...) is part of the cache key.
+    const empty = Array.isArray(data) && data.length === 0;
+    return Response.json(
+      { data },
+      {
+        headers: {
+          "Cache-Control": empty ? "no-store" : CACHE,
+          "Netlify-Vary": "query",
+        },
+      },
+    );
   } catch (e) {
     if (e instanceof UpstreamError) {
-      return Response.json({ error: e.message, code: e.code }, { status: e.status });
+      return Response.json(
+        { error: e.message, code: e.code },
+        { status: e.status },
+      );
     }
     return Response.json({ error: "Unexpected error" }, { status: 500 });
   }
