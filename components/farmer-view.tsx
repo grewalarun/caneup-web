@@ -20,6 +20,7 @@ import {
   IconBookmark,
   IconSwap,
   SectionTitle,
+  Segmented,
   StatusBadge,
   type Column,
 } from "./ui";
@@ -423,14 +424,23 @@ function Supply({
   lang: Lang;
   codes: { village: string; grower: string; ugc: string };
 }) {
-  const rows = data.supplyTickets;
+  const allRows = data.supplyTickets;
   const [open, setOpen] = useState<SupplyTicket | null>(null);
+  const [filter, setFilter] = useState<"all" | "weighed" | "notWeighed">("all");
+  const count = (s: SupplyTicket["status"]) =>
+    allRows.filter((r) => r.status === s).length;
+  const rows =
+    filter === "all"
+      ? allRows
+      : allRows.filter(
+          (r) => r.status === (filter === "weighed" ? "Weighed" : "Not weighed"),
+        );
   const who = {
     name: pick(data.profile.farmerName, lang),
     village: codes.village,
     grower: codes.grower,
   };
-  if (!rows.length)
+  if (!allRows.length)
     return (
       <div className="space-y-4">
         <EmptyState>{t("noTickets", lang)}</EmptyState>
@@ -493,7 +503,31 @@ function Supply({
 
   return (
     <div className="space-y-4">
-      <DataTable caption={t("tabSupply", lang)} columns={columns} rows={rows} />
+      <Segmented
+        label={t("filterTickets", lang)}
+        value={filter}
+        onChange={setFilter}
+        options={[
+          { value: "all", label: `${t("all", lang)} (${allRows.length})` },
+          {
+            value: "weighed",
+            label: `${t("weighed", lang)} (${count("Weighed")})`,
+          },
+          {
+            value: "notWeighed",
+            label: `${t("notWeighed", lang)} (${count("Not weighed")})`,
+          },
+        ]}
+      />
+      {rows.length ? (
+        <DataTable
+          caption={t("tabSupply", lang)}
+          columns={columns}
+          rows={rows}
+        />
+      ) : (
+        <EmptyState>{t("noMatchingTickets", lang)}</EmptyState>
+      )}
       {open && (
         <TicketDialog
           title={t("ticketDetails", lang)}

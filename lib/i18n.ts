@@ -146,6 +146,11 @@ const L = {
   notWeighed: { en: "Not weighed", hi: "तौल बाकी" },
   cancelled: { en: "Cancelled", hi: "रद्द" },
   unknown: { en: "Unknown", hi: "अज्ञात" },
+  filterTickets: { en: "Filter tickets by status", hi: "स्थिति के अनुसार टिकट छानें" },
+  noMatchingTickets: {
+    en: "No tickets match this filter.",
+    hi: "इस फ़िल्टर में कोई टिकट नहीं है।",
+  },
   noTickets: {
     en: "No supply tickets for this season yet.",
     hi: "इस सत्र में अभी कोई सप्लाई टिकट नहीं है।",
